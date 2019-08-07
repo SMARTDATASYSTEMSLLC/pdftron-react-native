@@ -1,124 +1,114 @@
 /**
  * Sample React Native App
  * https://github.com/facebook/react-native
+ *
+ * @format
  * @flow
  */
 
-import React, { Component } from 'react';
+import React, {Fragment} from 'react';
 import {
-  Platform,
+  SafeAreaView,
   StyleSheet,
-  Text,
+  ScrollView,
   View,
-  PermissionsAndroid,
-  BackHandler,
-  Alert
+  Text,
+  StatusBar,
 } from 'react-native';
 
-import { DocumentView, RNPdftron, Config } from 'react-native-pdftron';
+import {
+  Header,
+  LearnMoreLinks,
+  Colors,
+  DebugInstructions,
+  ReloadInstructions,
+} from 'react-native/Libraries/NewAppScreen';
 
-type Props = {};
-export default class App extends Component<Props> {
-
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      permissionGranted: Platform.OS === 'ios' ? true : false
-    };
-
-    RNPdftron.initialize("");
-  }
-
-  componentDidMount() {
-    if (Platform.OS === 'android') {
-      this.requestStoragePermission();
-    }
-  }
-
-  async requestStoragePermission() {
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE
-      );
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        this.setState({
-          permissionGranted: true
-        });
-        console.log("Storage permission granted");
-      } else {
-        this.setState({
-          permissionGranted: false
-        });
-        console.log("Storage permission denied");
-      }
-    } catch (err) {
-      console.warn(err);
-    }
-  }
-
-  onLeadingNavButtonPressed = () => {
-    console.log('leading nav button pressed');
-    if (this._viewer) {
-      this._viewer.exportAnnotations().then((xfdf) => {
-        console.log('xfdf', xfdf);
-      });
-    }
-
-    if (Platform.OS === 'ios') {
-      Alert.alert(
-        'App',
-        'onLeadingNavButtonPressed',
-        [
-          {text: 'OK', onPress: () => console.log('OK Pressed')},
-        ],
-        { cancelable: true }
-      )
-    } else {
-      BackHandler.exitApp();
-    }
-  }
-
-  onDocumentLoaded = () => {
-    if (this._viewer) {
-      const xfdf = '<?xml version="1.0" encoding="UTF-8"?>\n<xfdf xmlns="http://ns.adobe.com/xfdf/" xml:space="preserve">\n\t<annots>\n\t\t<circle style="solid" width="5" color="#E44234" opacity="1" creationdate="D:20190729202215Z" flags="print" date="D:20190729202215Z" page="0" rect="138.824,653.226,236.28,725.159" title="" />\n\t\t<circle style="solid" width="5" color="#E44234" opacity="1" creationdate="D:20190729202215Z" flags="print" date="D:20190729202215Z" page="0" rect="103.114,501.958,245.067,590.92" title="" />\n\t\t<circle style="solid" width="5" color="#E44234" opacity="1" creationdate="D:20190729202216Z" flags="print" date="D:20190729202216Z" page="0" rect="117.85,336.548,328.935,451.568" title="" />\n\t\t<freetext TextColor="#363636" style="solid" width="0" opacity="1" creationdate="D:20190729202455Z" flags="print" date="D:20190729202513Z" page="0" rect="320.774,646.323,550.446,716.498" title="">\n\t\t\t<defaultstyle>font: Roboto 24pt;color: #363636</defaultstyle>\n\t\t\t<defaultappearance> 1 1 1 RG 1 1 1 rg /F0 24 Tf </defaultappearance>\n\t\t\t<contents>HELLO PDFTRON!!!</contents>\n\t\t\t<apref y="716.498" x="320.774" gennum="0" objnum="404" />\n\t\t</freetext>\n\t\t<line style="solid" width="5" color="#E44234" opacity="1" creationdate="D:20190729202507Z" flags="print" start="278.209,212.495" end="214.177,411.627" head="None" tail="OpenArrow" date="D:20190729202507Z" page="0" rect="206.039,211.73,280.589,416.387" title="" />\n\t</annots>\n\t<pages>\n\t\t<defmtx matrix="1.333333,0.000000,0.000000,-1.333333,0.000000,1056.000000" />\n\t</pages>\n\t<pdf-info version="2" xmlns="http://www.pdftron.com/pdfinfo" />\n</xfdf>';
-      this._viewer.importAnnotations(xfdf);
-    }
-  }
-
-  render() {
-    if (!this.state.permissionGranted) {
-      return (
-        <View style={styles.container}>
-          <Text>
-            Storage permission required.
-          </Text>
-        </View>
-      )
-    }
-
-    const path = "https://pdftron.s3.amazonaws.com/downloads/pl/PDFTRON_mobile_about.pdf";
-
-    return (
-      <DocumentView
-        ref={(c) => this._viewer = c}
-        document={path}
-        showLeadingNavButton={true}
-        leadingNavButtonIcon={Platform.OS === 'ios' ? 'ic_close_black_24px.png' : 'ic_arrow_back_white_24dp'}
-        onLeadingNavButtonPressed={this.onLeadingNavButtonPressed}
-        onDocumentLoaded={this.onDocumentLoaded}
-        disabledElements={[Config.Buttons.searchButton, Config.Buttons.shareButton]}
-        disabledTools={[Config.Tools.annotationCreateLine, Config.Tools.annotationCreateRectangle]}
-      />
-    );
-  }
-}
+const App = () => {
+  return (
+    <Fragment>
+      <StatusBar barStyle="dark-content" />
+      <SafeAreaView>
+        <ScrollView
+          contentInsetAdjustmentBehavior="automatic"
+          style={styles.scrollView}>
+          <Header />
+          {global.HermesInternal == null ? null : (
+            <View style={styles.engine}>
+              <Text style={styles.footer}>Engine: Hermes</Text>
+            </View>
+          )}
+          <View style={styles.body}>
+            <View style={styles.sectionContainer}>
+              <Text style={styles.sectionTitle}>Step One</Text>
+              <Text style={styles.sectionDescription}>
+                Edit <Text style={styles.highlight}>App.js</Text> to change this
+                screen and then come back to see your edits.
+              </Text>
+            </View>
+            <View style={styles.sectionContainer}>
+              <Text style={styles.sectionTitle}>See Your Changes</Text>
+              <Text style={styles.sectionDescription}>
+                <ReloadInstructions />
+              </Text>
+            </View>
+            <View style={styles.sectionContainer}>
+              <Text style={styles.sectionTitle}>Debug</Text>
+              <Text style={styles.sectionDescription}>
+                <DebugInstructions />
+              </Text>
+            </View>
+            <View style={styles.sectionContainer}>
+              <Text style={styles.sectionTitle}>Learn More</Text>
+              <Text style={styles.sectionDescription}>
+                Read the docs to discover what to do next:
+              </Text>
+            </View>
+            <LearnMoreLinks />
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+    </Fragment>
+  );
+};
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  }
+  scrollView: {
+    backgroundColor: Colors.lighter,
+  },
+  engine: {
+    position: 'absolute',
+    right: 0,
+  },
+  body: {
+    backgroundColor: Colors.white,
+  },
+  sectionContainer: {
+    marginTop: 32,
+    paddingHorizontal: 24,
+  },
+  sectionTitle: {
+    fontSize: 24,
+    fontWeight: '600',
+    color: Colors.black,
+  },
+  sectionDescription: {
+    marginTop: 8,
+    fontSize: 18,
+    fontWeight: '400',
+    color: Colors.dark,
+  },
+  highlight: {
+    fontWeight: '700',
+  },
+  footer: {
+    color: Colors.dark,
+    fontSize: 12,
+    fontWeight: '600',
+    padding: 4,
+    paddingRight: 12,
+    textAlign: 'right',
+  },
 });
+
+export default App;
